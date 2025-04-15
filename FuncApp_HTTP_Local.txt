@@ -1,0 +1,35 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+ 
+namespace FunctionApp1
+{
+    public class Function1
+    {
+        private readonly ILogger _logger;
+ 
+        public Function1(ILogger logger)
+        {
+            _logger = logger;
+        }
+ 
+        [Function("Function1")]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
+        {
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+ 
+            // Get the 'name' parameter from the query string
+            string name = req.Query["name"];
+ 
+            // If the 'name' parameter is not provided, use a default value
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "Guest";
+            }
+ 
+            // Return a personalized message
+            return new OkObjectResult($"Welcome to Azure Functions, {name}!");
+        }
+    }
+}
